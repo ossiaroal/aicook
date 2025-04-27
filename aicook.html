@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>深夜食材AI助手</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #fafafa; margin: 20px; padding: 0; }
+    h1 { font-size: 22px; color: #333; }
+    .input-area { margin: 20px 0; }
+    input[type=text] { width: 90%; padding: 10px; font-size: 16px; }
+    .quick-buttons { margin-top: 10px; }
+    .quick-buttons button { margin: 5px; padding: 8px 12px; font-size: 14px; cursor: pointer; }
+    .recipe-card { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    .recipe-card h2 { margin: 0 0 5px; font-size: 18px; }
+    .recipe-card p { margin: 5px 0; color: #555; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<h1>你手上有什么食材？<br>告诉我，我来想办法。</h1>
+
+<div class="input-area">
+  <input type="text" id="ingredientInput" placeholder="输入食材，如 鸡蛋、米饭...">
+  <div class="quick-buttons">
+    <button onclick="addIngredient('鸡蛋')">鸡蛋</button>
+    <button onclick="addIngredient('米饭')">米饭</button>
+    <button onclick="addIngredient('葱')">葱</button>
+    <button onclick="addIngredient('火腿肠')">火腿肠</button>
+  </div>
+</div>
+
+<div id="recipes"></div>
+
+<script>
+const recipesData = [
+  {
+    name: "蛋炒饭",
+    ingredients: ["鸡蛋", "米饭", "葱"],
+    steps: ["煎鸡蛋", "加入米饭、葱炒匀", "调味"],
+    time: "5分钟",
+    message: "夜深了，照顾好自己。"
+  },
+  {
+    name: "葱花煎蛋饼",
+    ingredients: ["鸡蛋", "葱"],
+    steps: ["打鸡蛋加葱拌匀", "倒入油锅中煎熟"],
+    time: "3分钟",
+    message: "简单点也挺好~"
+  },
+  {
+    name: "简易粥饭",
+    ingredients: ["米饭"],
+    steps: ["加米饭和水到锅里", "煮到稠为止"],
+    time: "10分钟",
+    message: "温温暖暖的最好啦。"
+  }
+];
+
+function addIngredient(name) {
+  const input = document.getElementById('ingredientInput');
+  if (!input.value.includes(name)) {
+    input.value += (input.value ? '、' : '') + name;
+  }
+}
+
+function findRecipes(ingredients) {
+  const result = recipesData.filter(recipe =>
+    recipe.ingredients.every(item => ingredients.includes(item))
+  );
+  return result.length ? result : [{
+    name: "煎鸡蛋",
+    steps: ["打鸡蛋", "倒入油锅煎熟"],
+    time: "3分钟",
+    message: "简单吃点，也是一种温柔。"
+  }];
+}
+
+function renderRecipes() {
+  const input = document.getElementById('ingredientInput').value;
+  const ingredientList = input.split('、').map(i => i.trim()).filter(i => i);
+  const recipes = findRecipes(ingredientList);
+  const container = document.getElementById('recipes');
+  container.innerHTML = '';
+  recipes.forEach(recipe => {
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.innerHTML = `<h2>${recipe.name}（${recipe.time}）</h2>
+      <p>步骤：${recipe.steps.join(' ➔ ')}</p>
+      <p><em>${recipe.message}</em></p>`;
+    container.appendChild(card);
+  });
+}
+
+document.getElementById('ingredientInput').addEventListener('change', renderRecipes);
+</script>
+
+</body>
+</html>
