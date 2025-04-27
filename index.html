@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>深夜食材AI助手</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background-color: #FFF8F0;
+      margin: 20px;
+      padding: 0;
+      color: #333;
+    }
+    h1 {
+      font-size: 24px;
+      color: #FF8C42;
+      margin-bottom: 20px;
+    }
+    .input-area {
+      margin: 20px 0;
+    }
+    input[type=text] {
+      width: 90%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #FFCBA4;
+      border-radius: 10px;
+      background-color: #fff;
+    }
+    .quick-buttons {
+      margin-top: 15px;
+    }
+    .quick-buttons button {
+      margin: 5px;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(90deg, #FFD2A6, #FFF8F0);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .quick-buttons button:hover {
+      transform: scale(1.05);
+    }
+    #recipes {
+      margin-top: 30px;
+    }
+    .recipe-card {
+      background: #fff;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .recipe-card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: #FF8C42;
+    }
+    .recipe-card p {
+      margin: 5px 0;
+      color: #555;
+      font-size: 15px;
+    }
+    .warm-note {
+      margin-top: 10px;
+      color: #888;
+      font-style: italic;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>你手上有什么食材？🍳<br>告诉我，我来想办法。</h1>
+
+<div class="input-area">
+  <input type="text" id="ingredientInput" placeholder="输入食材，如 鸡蛋、米饭...">
+  <div class="quick-buttons">
+    <button onclick="addIngredient('鸡蛋')">鸡蛋</button>
+    <button onclick="addIngredient('米饭')">米饭</button>
+    <button onclick="addIngredient('葱')">葱</button>
+    <button onclick="addIngredient('火腿肠')">火腿肠</button>
+    <button onclick="addIngredient('方便面')">方便面</button>
+  </div>
+</div>
+
+<div id="recipes"></div>
+
+<script>
+const recipesData = [
+  {
+    name: "蛋炒饭",
+    ingredients: ["鸡蛋", "米饭", "葱"],
+    steps: ["煎鸡蛋", "加入米饭、葱炒匀", "调味"],
+    time: "5分钟",
+    message: "夜深了，吃点热的暖暖自己🌙"
+  },
+  {
+    name: "葱花煎蛋饼",
+    ingredients: ["鸡蛋", "葱"],
+    steps: ["打鸡蛋加葱拌匀", "倒入油锅中煎熟"],
+    time: "3分钟",
+    message: "简单点，也是一种温柔🍵"
+  },
+  {
+    name: "简易米粥",
+    ingredients: ["米饭"],
+    steps: ["加米饭和水到锅里", "小火慢煮至粘稠"],
+    time: "10分钟",
+    message: "温温热热地入睡最安心✨"
+  }
+];
+
+function addIngredient(name) {
+  const input = document.getElementById('ingredientInput');
+  if (!input.value.includes(name)) {
+    input.value += (input.value ? '、' : '') + name;
+  }
+  renderRecipes();
+}
+
+function findRecipes(ingredients) {
+  const result = recipesData.filter(recipe =>
+    recipe.ingredients.every(item => ingredients.includes(item))
+  );
+  return result.length ? result : [{
+    name: "煎鸡蛋",
+    ingredients: ["鸡蛋"],
+    steps: ["打鸡蛋", "倒入油锅煎熟"],
+    time: "3分钟",
+    message: "简单吃一点，也是对自己的温柔🌙"
+  }];
+}
+
+function renderRecipes() {
+  const input = document.getElementById('ingredientInput').value;
+  const ingredientList = input.split('、').map(i => i.trim()).filter(i => i);
+  const recipes = findRecipes(ingredientList);
+  const container = document.getElementById('recipes');
+  container.innerHTML = '';
+  recipes.forEach(recipe => {
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
+    card.innerHTML = `<h2>${recipe.name}（${recipe.time}）</h2>
+      <p>步骤：${recipe.steps.join(' ➔ ')}</p>
+      <p class="warm-note">${recipe.message}</p>`;
+    container.appendChild(card);
+  });
+}
+
+document.getElementById('ingredientInput').addEventListener('change', renderRecipes);
+</script>
+
+</body>
+</html>
